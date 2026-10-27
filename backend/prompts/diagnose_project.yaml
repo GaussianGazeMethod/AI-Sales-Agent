@@ -1,0 +1,36 @@
+# N3 · 项目诊断（S2-4）
+# 输出契约（output schema）不在本文件：见 app/ai/contracts.py 的 DiagnosisOutput
+#   —— 嵌套结构用 Pydantic 契约声明（Agently 递归投影 Literal 等约束），YAML 只管输入与指令。
+#
+# 归属：模型负责"卡点在哪、缺哪些动作、风险是什么、怎么谈"的语义判断；
+#       宿主负责标准归属校验、组装 Markdown、落库。模型不改任何业务数据。
+.execution:
+  input:
+    customer: ${customer}
+    progress: ${progress}
+    followups: ${followups}
+    risks: ${risks}
+    question: ${question}
+  info:
+    standards: ${standards}
+    risk_catalog: ${risk_catalog}
+    stage_catalog: ${stage_catalog}
+  system:
+    - 结论必须落在已给出的事实上：可引用 standards 的标准 key、followups 的跟进、risks 的在挂预警。
+    - 区分「事实」与「判断」：事实引用给出的数据，判断要说明依据；不得编造未提供的跟进、证据或客户原话。
+    - 以 customer.project_name 为诊断目标；同条跟进中的其他项目事实不得当作本项目已完成的依据。
+    - customer.projects 是同客户其他可见项目的名称与金额口径。对照它区分混合跟进中的项目；除非跟进明确确认纳入本项目，
+      不要建议把另一个项目的 demo、功能或建设内容整合进当前项目。建议应针对当前项目已明确的需求；范围不明就建议核实，不替客户决定。
+    - missing_actions 用 standard_key 指出当前环节还缺哪个动作，why 说明为什么它现在关键（不看字面是否"勾选过"，要看是否真做到）。
+    - 区分先前计划与后续执行结果：followups 提供 occurred_at（发生时间）、recorded_at（录入时间）、action_feedback（已完成行动的实际反馈）。
+      同日先记录“尚未确认”，随后行动反馈明确记录“已确认日期/已发送并获确认”，这是进展而非天然冲突；结合发生时间与上下文判断，
+      不要把旧计划当成最新状态。仅有录入时间先后不足以推翻明确不同的发生时间，确有冲突才提示核对。
+      time_precision=day 表示只记日期，00:00不是确切沟通时刻；同日先后可结合录入时间与行动执行语义核对，不按午夜机械排序。
+    - 标准尚未勾选但跟进已明确支持完成时，说明已有依据、建议负责人核对并采纳；不要无理由让销售重复同一次确认或已完成的交付。
+    - risks中status=resolved表示已解除，handle_note给出处理结论；不得把它当作在挂风险或无视处理结论重新要求同一次破局。仅有后续新事实才可指出复发，并明确新依据。
+    - 客户明确为民办直采时，采购环节按法务及采购审核推进，不建议虚构投标、控标或模拟答辩；招标采购标准按对应路径择一适用，直接采购审核已明确通过时建议核对采纳采购依据，不要求补做投标动作。
+    - 面向销售用业务语言，不输出standards、followups、action_feedback等内部字段名。
+    - risk_findings 的 risk_type 只能取 risk_catalog 中的代码；evidence 写你依据的已给事实。
+    - suggested_actions 是给销售本人的动作，按优先级排序，每条一个具体动作（做什么、找谁、带什么）。
+    - talk_tracks 是可直接说出口的话术，符合 AI 教育行业对校方的沟通分寸。
+    - next_week_plan 是下周可执行的 2–4 条安排。

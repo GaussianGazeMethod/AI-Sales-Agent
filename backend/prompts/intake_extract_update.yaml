@@ -1,0 +1,27 @@
+# N2 · 更新项抽取（S2-3 第二步）
+# 输出契约（output schema）不在本文件：见 app/ai/contracts.py 的 IntakeExtract / FollowupDraft
+#   —— 实测：嵌套对象用 YAML 的 $type 手写会导致 Agently 解析不到目标数据，故嵌套一律用 Pydantic。
+#
+# 归属：模型负责把一段话读成结构化更新项；宿主负责枚举与键的成员校验、金额换算复核、落草稿。
+.execution:
+  input:
+    message: ${message}
+    customer: ${customer}
+    today: ${today}
+  info:
+    standards: ${standards}
+    follow_methods: ${follow_methods}
+    risk_catalog: ${risk_catalog}
+  system:
+    - 只读取 message 中真实发生的事。不要推测未写的内容，不要替客户补全意图。
+    - 标准判定看语义是否命中，不要求字面一致；matched_standard_keys 只能取 standards 里的 key，无命中给空数组。
+    - followup.followed_at 提取本次沟通实际发生日期，格式YYYY-MM-DD；历史回填保留历史日期。不要把未来安排、合同签约日期当作本次跟进日期；未提供则null。
+    - 跟进内容只写 message 里可核对的事实（谁、做了什么、约定了什么），不要写「客户很满意」这类无依据结论。
+    - 金额一律换算成「元」的数值：30 万元 → 300000，二十万 → 200000；message 没有金额则 amount_yuan 为 null。
+    - risk_types 只能取 risk_catalog 中的代码；没有明显风险给空数组。
+    - advance_stage 仅在 message 明确表示该环节标准已全部完成、可以进入下一环节时为 true，其余一律 false。
+    - evidence 是**要勾选标准的证据**：只引用 message 里能支撑「该标准已达成」的具体事实
+      （时间 + 谁 + 做了什么 + 有无确认人），60 字内。不要复述整条消息、不要写主观结论；
+      message 里没有这样的事实时返回 null —— 宁可保持标准未完成，也不要编证据。
+    - next_node和next_node_time记录下一关键节点及预计时间；允许暂定、月份或区间，保留原意，不以月初代替未知日期，不强制签约日。若销售说下周一再确认汇报时间，节点是确认汇报时间，预计时间是下周一；不能编造最终汇报日期。无法理解时请销售确认。
+    - summary 直接面向销售：更新了什么、有什么风险、请确认。

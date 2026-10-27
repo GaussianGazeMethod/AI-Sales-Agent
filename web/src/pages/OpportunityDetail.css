@@ -1,0 +1,55 @@
+.opportunity-panels {
+  --review-panel-height: 640px;
+}
+
+.opportunity-panels > .ant-col:first-child > .ant-card {
+  height: var(--review-panel-height);
+}
+
+.opportunity-tab-body {
+  height: calc(var(--review-panel-height) - 96px);
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-gutter: stable;
+}
+
+.opportunity-side {
+  height: var(--review-panel-height);
+  display: flex;
+  flex-direction: column;
+}
+
+.opportunity-side > .ant-space-item:first-child {
+  height: 220px;
+  flex: 0 0 220px;
+}
+
+.opportunity-side > .ant-space-item:last-child {
+  flex: 1;
+  min-height: 0;
+}
+
+.opportunity-side > .ant-space-item > .ant-card {
+  height: 100%;
+}
+
+.opportunity-side > .ant-space-item > .ant-card > .ant-card-body {
+  height: calc(100% - 40px);
+  overflow-y: auto;
+}
+
+.opportunity-advice-card > .ant-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opportunity-advice-card > .ant-card-body > div:last-child {
+  margin-top: auto !important;
+}
+
+@media (max-width: 991px) {
+  .opportunity-panels > .ant-col + .ant-col {
+    margin-top: 12px;
+  }
+}

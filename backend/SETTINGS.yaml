@@ -1,0 +1,81 @@
+# 市场助手 · Agently 模型配置
+#
+# 依据 Agently-Skills（catalog v3 / agently 4.1.4.8）：
+# - skills/agently-request/references/model-setup.md
+#   · 设置文件用 Agently.load_settings("yaml_file", path, auto_load_env=True)
+#   · provider 配置写在「插件真正读取的命名空间」：plugins.ModelRequester.OpenAICompatible.*
+#   · 端点 / 模型 / 密钥用 ${ENV.xxx} 占位，绝不把密钥或环境相关端点写进代码
+#   · 模型别名走 model_pool → model_profiles → api_key_pools 的分层形状；
+#     profile 里除 provider/model/api_key_pool/api_key 之外的键会被注入插件命名空间
+#
+#  业务代码只用「别名」（extract / diagnose / compose），不直接写模型名与 URL。
+
+plugins:
+  ModelRequester:
+    # 激活的 provider 插件（OpenAI 兼容协议：DeepSeek 官方即兼容此协议）
+    activate: OpenAICompatible
+    OpenAICompatible:
+      base_url: "${ENV.DEEPSEEK_BASE_URL}"
+      auth: "${ENV.DEEPSEEK_API_KEY}"
+      model_type: chat
+      # 传输层瞬时断连的**同请求**重放（不是业务降级、不是换实现）
+      request_retry:
+        max_attempts: 2
+        after_output: true
+
+# ── 模型别名 → profile id ──
+model_pool:
+  extract: deepseek-extract
+  diagnose: deepseek-diagnose
+  compose: deepseek-compose
+  dialogue: deepseek-dialogue
+
+# ── profile：模型名 + 该用途的请求参数 ──
+# 注意：profile 里的 request_options 会整体覆盖命名空间同名键，因此每个 profile 写全。
+model_profiles:
+  # 结构化信息抽取：关闭思考，要快、要稳（抽取是"读事实"，不是"推理"）
+  deepseek-extract:
+    api_key_pool: deepseek
+    model: "${ENV.DEEPSEEK_MODEL}"
+    request_options:
+      temperature: 0.1
+      max_tokens: 4096
+      thinking:
+        type: disabled
+
+  # 项目诊断：开启思考并给足预算（实测思考内容也计入 max_tokens，4096 会被推理吃光）
+  deepseek-diagnose:
+    api_key_pool: deepseek
+    model: "${ENV.DEEPSEEK_MODEL}"
+    request_options:
+      temperature: 0.3
+      max_tokens: 16384
+      thinking:
+        type: enabled
+
+  # 对话收尾：识别已答/未答与新缺口；低强度思考，单独限制输出预算。
+  deepseek-dialogue:
+    api_key_pool: deepseek
+    model: "${ENV.DEEPSEEK_MODEL}"
+    request_options:
+      max_tokens: 4096
+      reasoning_effort: low
+      thinking:
+        type: enabled
+
+  # 周报正文：自由文本写作，不需要思考，预算中等
+  deepseek-compose:
+    api_key_pool: deepseek
+    model: "${ENV.DEEPSEEK_MODEL}"
+    request_options:
+      temperature: 0.5
+      max_tokens: 8192
+      thinking:
+        type: disabled
+
+api_key_pools:
+  deepseek:
+    selection: fixed
+    keys:
+      - id: primary
+        api_key: "${ENV.DEEPSEEK_API_KEY}"

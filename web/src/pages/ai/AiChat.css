@@ -1,0 +1,38 @@
+/* C1/C2/C4：输入与核对并列，会话列表在窄屏不抢占首屏。 */
+.ai-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.ai-workspace > section { min-width: 0; }
+.ai-workspace-sessions { grid-column: 1 / -1; }
+.ai-workspace-sessions .ant-list-items {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  max-height: 144px;
+}
+.ai-workspace-sessions .ant-list-item {
+  flex: 0 0 224px;
+  min-width: 0;
+  border: 1px solid var(--border);
+}
+.ai-workspace-sessions .ant-list-item-meta { min-width: 0; }
+.ai-workspace-conversation .ant-card-head-wrapper { flex-wrap: wrap; gap: 8px; }
+.ai-workspace-conversation textarea { min-height: 120px; }
+@media (min-width: 1400px) {
+  .ai-workspace { grid-template-columns: minmax(200px, 3fr) minmax(0, 6fr) minmax(0, 6fr); }
+  .ai-workspace-sessions { grid-column: auto; }
+  .ai-workspace-sessions .ant-list-items { display: block; max-height: 640px; overflow-y: auto; }
+  .ai-workspace-sessions .ant-list-item { margin-bottom: 8px; }
+}
+@media (max-width: 900px) {
+  .ai-workspace { grid-template-columns: minmax(0, 1fr); }
+}
+.ai-conversation-history {
+  max-height: clamp(100px, 18vh, 240px);
+  overflow-y: auto;
+  padding-right: 8px;
+}
+.ai-workspace-sessions .ant-list-item-meta-description { font-size: 12px; }

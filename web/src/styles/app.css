@@ -1,0 +1,321 @@
+/**
+ * 全局样式与设计系统工具类（配合 src/theme.ts 使用）。
+ *
+ * 只在 AntD 覆盖不到的地方补充样式；能用 token / 组件的就不要在这里加类。
+ * 对应文档：spec/11-UI设计规范.md
+ */
+
+:root {
+  --brand: #465fff;
+  --brand-soft: #eef1ff;
+  --bg-layout: #f5f7fa;
+  --border: #eaecef;
+  --text-main: #182230;
+  --text-sub: #667085;
+  --success: #12b76a;
+  --warning: #f79009;
+  /* 琥珀提示底（如「仅对当前页」的说明块、未生效提示） */
+  --warning-soft: #fffcf6;
+  /* 卡片底（表格/面板内嵌块）；与 --bg-layout 区分层次 */
+  --bg-card: #ffffff;
+  --danger: #f04438;
+  --brand-strong: #3538cd;
+  --brand-deep: #5b34d6;
+  --brand-line: #c7d7fe;
+  --text-muted: #98a2b3;
+  --text-strong: #182230;
+  --fill-soft: #f2f4f7;
+  --fill-line: #e4e7ec;
+  --danger-strong: #b42318;
+  --danger-soft: #feeceb;
+  --danger-line: #fbc9c4;
+  --success-strong: #087443;
+  --success-soft: #e7f8f0;
+  --success-line: #b7ebd3;
+  --warning-strong: #b54708;
+  --warning-fill: #fef4e6;
+  --warning-line: #fbddb4;
+  --violet-soft: #f4f0ff;
+  --violet-line: #e4daff;
+
+  --radius: 8px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-layout);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/**
+ * 7 环节箭头步骤条上的 chevron 现在是**可点**的（点击查看该环节的完成标准与达成依据）。
+ * 用 `filter` 而不是 `outline` / `box-shadow` 做反馈：这些箭头用 `clip-path` 裁过形，
+ * 外描边会被一起裁掉，整块变亮/变暗在斜边上才看得出来。
+ */
+.stage-chevron {
+  border: none;
+  font-family: inherit;
+  transition: filter 0.15s ease;
+}
+
+.stage-chevron:not(:disabled) {
+  cursor: pointer;
+}
+
+.stage-chevron:not(:disabled):hover {
+  filter: brightness(0.95);
+}
+
+.stage-chevron:not(:disabled):active {
+  filter: brightness(0.88);
+}
+
+.stage-chevron:focus-visible {
+  filter: brightness(0.92);
+}
+
+.stage-chevron[data-active='true'] {
+  filter: brightness(0.9);
+}
+
+/* ══════════════ 页面标题区（大标题 + 副标题 + 元信息）══════════════ */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-main);
+}
+
+.page-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+/* 一行元信息（客户 / 行业 / 区域 / 负责人 / 创建时间） */
+.page-meta {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text-sub);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.page-meta .meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ══════════════ KPI 卡（彩色圆角图标 + 值/分母 + 进度）══════════════ */
+
+.kpi-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  height: 100%;
+}
+
+.kpi-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.kpi-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: var(--text-sub);
+  margin-bottom: 2px;
+}
+
+.kpi-value {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.kpi-value .kpi-total {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-sub);
+  margin-left: 4px;
+}
+
+.kpi-foot {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpi-foot .kpi-rate {
+  font-size: 12px;
+  color: var(--text-sub);
+  white-space: nowrap;
+}
+
+/* ══════════════ 门槛 / 缺口提示（琥珀）：为什么不能推进 + 缺什么 ══════════════ */
+
+.gate-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fef7ec;
+  border: 1px solid #fbe2bf;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  color: #93370d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.gate-banner .gate-icon {
+  color: var(--warning);
+  font-size: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.gate-banner .gate-title {
+  font-weight: 600;
+}
+
+.gate-banner .gate-items {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+.gate-banner .gate-items li {
+  margin-bottom: 2px;
+}
+
+.gate-banner .gate-action {
+  margin-top: 8px;
+}
+
+/* ══════════════ 页脚口径（ⓘ 小字）══════════════ */
+
+.footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--text-sub);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.footnote .footnote-icon {
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+/* ══════════════ 面板角标（如「未确认不生效」）══════════════ */
+
+.panel-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fef4e6;
+  color: #b54708;
+  border: 1px solid #fbe2bf;
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-size: 12px;
+  line-height: 20px;
+}
+
+/* ══════════════ 侧栏项（浅蓝底 + 左侧蓝条）══════════════ */
+
+.sider-item-active {
+  position: relative;
+}
+
+.sider-item-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--brand);
+}
+
+/* 统一空态/引导块的呼吸感 */
+.guide-block {
+  padding: 8px 0;
+}
+
+.guide-block .guide-actions {
+  margin-top: 12px;
+}
+
+/* ══════════════ 侧栏菜单选中态（浅蓝底 + 左侧蓝条，对齐设计稿）══════════════ */
+
+.ant-menu-light.ant-menu-root.ant-menu-inline .ant-menu-item-selected,
+.ant-menu-light .ant-menu-submenu-selected > .ant-menu-submenu-title {
+  position: relative;
+  font-weight: 500;
+}
+
+.ant-menu-light.ant-menu-root.ant-menu-inline .ant-menu-item-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--brand);
+}
+
+/* 菜单图标默认灰、选中蓝（设计稿） */
+.ant-menu-light .ant-menu-item .anticon,
+.ant-menu-light .ant-menu-submenu-title .anticon {
+  color: #667085;
+}
+
+.ant-menu-light .ant-menu-item-selected .anticon {
+  color: var(--brand);
+}
+
+/* 表格：密集但可读（设计稿） */
+.ant-table-wrapper .ant-table-thead > tr > th {
+  font-weight: 500;
+  font-size: 13px;
+}

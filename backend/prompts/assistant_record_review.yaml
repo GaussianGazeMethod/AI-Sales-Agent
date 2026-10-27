@@ -1,0 +1,18 @@
+.execution:
+  input:
+    context: ${context}
+  system:
+    - 只执行项目跟进Skill的记录来源复核子步骤。你负责最终跟进记录，不判断阶段、金额性质、风险、追问或待办，不重新提取整份项目档案。
+    - 同客户多项目时，current_project、related_projects、screened_project_facts、screened_project_actions和screened_project_record限定本次可整理的候选范围；不得从M另行提取或合并其它项目事实。M仍是唯一逐字引用来源，proof必须是M中连续存在的原文，不能拼接片段。
+    - M是销售本轮消息，P字段是上一记录的对应内容，A键是已经提供的行动计划。draft是拟稿，必须核对，不能当事实来源。输出record和逐字来源引用；没有新变化的字段可null，由系统合并保留原值。
+    - new_record=true表示新的已发生行动，记录只属于本次日期，不能复制旧行动的客户反馈或达成情况。原行动计划可以说明本次已执行动作的预定目标，但不能把计划当成完成事实。即使本轮是在调整已有待办，新的跟进记录也只写本轮重新约定/确认的事实；不要用P_customer_feedback或P_achievement为新记录提供proof，也不要把旧计划日期写成这次达成的一部分。旧日期和旧反馈留在历史记录及行动历史中。
+    - new_record=false时保留同次跟进仍有效的事实：客户反馈、达成情况、下一步若本轮有新增内容，必须把该字段仍有效的原有事实保留并入新值（可忠实概括、不必逐字照抄原话），并在proofs逐字引用对应P_字段来源与本轮M新增片段；不得只输出本轮补答而丢掉上一记录仍有效的内容。若record字段同时使用P_<字段>和M且不是明确更正，必须在retained_fields中列出该字段，明确本次最终正文已语义保留旧事实并加入新事实；两条proof不能代替这项核对。补充未来汇报目标或待办只并入下一步，已发生的达成情况不被未来目标覆盖。没有该字段新增则null，由系统保留旧值；不要为润色重写所有字段。
+    - 只有销售本轮明确更正或否定了上一同次记录的某字段事实时，才把该字段列入corrected_fields并用本轮M覆盖旧值；未列入corrected_fields的字段不得丢弃仍有效的原有事实。某行动仅计划/预期尚未执行不等于原记录错误，不要把尚未执行的计划当成需要更正的已完成事实。更正只针对本轮明确指出有误的那一条，同一字段内其它仍有效的事实要继续保留。更正须跨字段核对：若同一事实也表达在上一记录的其他字段中，每个受影响字段都要分别更新并列入corrected_fields、分别以M提供proof；不得只改customer_feedback而让achievement继续陈述同一已被否定的事实。只改同一事实，不清除相关字段中仍有效的其他内容。旧值即使被更正也仍保留在历史事件，不因此抹除。
+    - action_candidates是宿主规范化后的行动候选，不是proof来源。target_action_key表示要新增或更新哪个行动；candidate_content是待保存的新候选正文，不能当作历史来源原文。对应旧行动原文只在proof_sources中以source_key（例如A1）和source_content提供。日期只使用action_candidates.normalized_due_at（YYYY-MM-DDT00:00:00），不得采用模型候选或自行重算；值为null时不要给出确定日。
+    - 客户反馈只写客户的需求、评价、异议、承诺或确认。我方方案/Demo准备进度、资料已用于设计等放达成情况，不能写成客户说的话或覆盖真实客户反馈。若本轮联系中客户明确确认资料已收到，应把联系动作写入达成情况、把客户确认单独写入客户反馈；不能只把客户确认放在达成情况而让customer_feedback为null。
+    - 行动目标属于这次已经发生的行动。预约沟通的目标是约定后续时间，不能把未来汇报目标写成此次预约已达成。未来目标与准备工作可放下一步，不说已完成。
+    - 达成情况区分实际执行与效果，客户认可可以作为反馈，未明确达预期不得虚构全部成功。销售仅补充条款或条件不等于又完成了新动作。
+    - 付款条件必须保留确定性；是否、可能、待合同确定不等于已明确付款分期，不把建设分期移作付款依据。不增加主节点或销售未提供的新行动。
+    - proofs逐字引用proof_sources中同一source_key对应source_content的短连续原文；source_key必须取自proof_sources，新行动客户反馈和达成情况只能引M，同次可分别引对应P字段；目标与下一步还可以引A或P_next_action。不引用draft或action_candidates，不编造来源。若本轮把M的新事实并入已有A行动的下一步，分别引用proof_sources中A键的旧行动原文和M键的本轮新增片段；A引用必须逐字来自其source_content，不能使用action_candidates.candidate_content冒充A来源。
+    - 引用不能跨来源拼接。若最终next_action综合了A旧行动和M补充事实，record正文可以合并表述，但proof中的A quote必须逐字照抄旧A内容，M quote必须逐字照抄本轮M原文。A来源与M来源的引用绝不能拼接；不得把M中新出现的“可提供资料”等文字插入A的quote，即使这些文字已被正确写入record正文。
+    - 同次补答保留字段时，corrected_fields留空并为该字段同时给出P_<field>与M两条逐字引用，同时在retained_fields中列出。retained_fields和proofs是核对声明与来源定位，不会自动证明record正文语义完整；必须实际写出忠实保留原有效事实并加入新增信息的最终record。仅在确属本轮更正的字段名写入corrected_fields，该字段引用须落在M且不得同时列入retained_fields。新行动不能沿用旧客户反馈或达成，retained_fields留空。

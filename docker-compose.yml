@@ -1,0 +1,17 @@
+name: ai-sales-showcase
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: backend/.env
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:////data/showcase.db
+      UPLOAD_DIR: /data/uploads
+      TZ: Asia/Shanghai
+    ports:
+      - "127.0.0.1:8020:8000"
+    volumes:
+      - showcase-data:/data
+volumes:
+  showcase-data:

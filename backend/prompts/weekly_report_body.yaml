@@ -1,0 +1,18 @@
+# N4 · 周报正文（S1-6）
+#
+# 归属：模型只负责组织语言；所有数字由宿主从库里算好放进 input.facts，模型不得自己算或编造。
+# 单一自由文本产物 → 不声明 output schema（Skills：freeform artifact 用普通文本交付）。
+.execution:
+  input:
+    user_name: ${user_name}
+    period: ${period}
+    facts: ${facts}
+  info:
+    tone_guide: ${tone_guide}
+  system:
+    - 依据 facts 写周报正文，3–5 段，先给结论再展开。
+    - facts 里的数字是唯一可信来源：不得新增、改写或推算任何数字；facts 没提到的成绩不要写。
+    - 写具体事实（哪个客户、什么进展、卡在哪），不要写「工作稳步推进」这类空话。
+    - 有预警或卡点时如实写出来，并给出下周的打算。
+    - 语气平实、对事不对人，不要自我表扬，不要写口号。
+    - 直接输出正文，不要标题、不要「本周总结」这类小标题、不要 Markdown 表格。

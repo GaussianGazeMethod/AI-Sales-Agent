@@ -1,0 +1,583 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sales skill handoff v1",
+  "type": "object",
+  "properties": {
+    "contract_version": {
+      "const": "1.0"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "turn_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "$ref": "#/$defs/context"
+    },
+    "output": {
+      "$ref": "#/$defs/output"
+    }
+  },
+  "required": [
+    "contract_version",
+    "request_id",
+    "task_id",
+    "turn_id",
+    "context",
+    "output"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "object": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "lead",
+            "project"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "customer_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "id",
+        "customer_id"
+      ],
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 1
+        },
+        "occurred_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recorded_at": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "record_id",
+        "quote",
+        "occurred_at",
+        "recorded_at"
+      ],
+      "additionalProperties": false
+    },
+    "fact": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {},
+        "nature": {
+          "type": "string",
+          "enum": [
+            "confirmed_fact",
+            "sales_observation",
+            "plan",
+            "inference",
+            "unknown"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "supersedes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "key",
+        "value",
+        "nature",
+        "source",
+        "supersedes"
+      ],
+      "additionalProperties": false
+    },
+    "missing": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocks_task": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "key",
+        "reason",
+        "blocks_task"
+      ],
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "PERMISSION_DENIED",
+            "OBJECT_UNRESOLVED",
+            "VALIDATION_FAILED",
+            "RULESET_MISMATCH",
+            "VERSION_CONFLICT",
+            "CAPABILITY_UNAVAILABLE",
+            "TIMEOUT",
+            "TOOL_FAILED"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "additionalProperties": false
+    },
+    "operation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "create_lead",
+            "record_lead_contact",
+            "validate_lead",
+            "convert_lead",
+            "archive_facts",
+            "retrieve_dossier",
+            "refresh_summary",
+            "upsert_todo",
+            "complete_todo",
+            "set_stage_evidence",
+            "advance_stage",
+            "register_signing",
+            "save_analysis"
+          ]
+        },
+        "object": {
+          "$ref": "#/$defs/object"
+        },
+        "source_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "succeeded",
+            "failed",
+            "unknown",
+            "skipped"
+          ]
+        },
+        "result_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "error": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/error"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "arguments": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "object",
+        "source_ids",
+        "idempotency_key",
+        "expected_version",
+        "status",
+        "result_ids",
+        "error",
+        "arguments"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "succeeded"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "result_ids": {
+                "minItems": 1
+              },
+              "error": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "failed",
+                  "unknown"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "error": {
+                "$ref": "#/$defs/error"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "skill": {
+          "type": "string",
+          "enum": [
+            "lead-intake-validation",
+            "sales-project-followup",
+            "project-dossier-management",
+            "project-diagnosis",
+            "project-requirements-report"
+          ]
+        },
+        "object": {
+          "$ref": "#/$defs/object"
+        },
+        "fact_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "operation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "skill",
+        "object",
+        "fact_ids",
+        "operation_ids",
+        "reason"
+      ],
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "live",
+            "historical",
+            "simulation"
+          ]
+        },
+        "skill": {
+          "type": "string",
+          "enum": [
+            "lead-intake-validation",
+            "sales-project-followup",
+            "project-dossier-management",
+            "project-diagnosis",
+            "project-requirements-report"
+          ]
+        },
+        "object": {
+          "$ref": "#/$defs/object"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "session_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "occurred_at": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "recorded_at": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": [
+            "id",
+            "text",
+            "occurred_at",
+            "recorded_at"
+          ],
+          "additionalProperties": false
+        },
+        "known_facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fact"
+          }
+        },
+        "pending_questions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "ruleset_versions": {
+          "type": "object",
+          "properties": {
+            "lead": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stage": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "risk": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "lead",
+            "stage",
+            "risk"
+          ],
+          "additionalProperties": false
+        },
+        "capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "required": [
+        "mode",
+        "skill",
+        "object",
+        "actor_id",
+        "session_id",
+        "message",
+        "known_facts",
+        "pending_questions",
+        "ruleset_versions",
+        "capabilities"
+      ],
+      "additionalProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "collecting",
+            "awaiting_user",
+            "ready",
+            "executing",
+            "completed",
+            "partial",
+            "blocked",
+            "suspended"
+          ]
+        },
+        "facts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/fact"
+          }
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/missing"
+          }
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "operations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/operation"
+          }
+        },
+        "handoffs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/handoff"
+          }
+        },
+        "reply": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "state",
+        "facts",
+        "missing",
+        "questions",
+        "operations",
+        "handoffs",
+        "reply"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "context": {
+            "properties": {
+              "mode": {
+                "const": "simulation"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "output": {
+            "properties": {
+              "operations": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

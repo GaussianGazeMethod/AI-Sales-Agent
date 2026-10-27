@@ -1,0 +1,17 @@
+# N1 · 客户定位（S2-3 第一步）
+# 输出契约（output schema）不在本文件：见 app/ai/contracts.py 的 IntakeResolve
+#   —— 嵌套结构用 Pydantic 契约声明（Agently 递归投影 Literal 等约束），YAML 只管输入与指令。
+#
+# 归属：模型负责"这段话指向哪个客户"这一语义判断；宿主只做键的成员资格校验与身份拼接。
+.execution:
+  input:
+    message: ${message}
+  info:
+    candidates: ${candidates}
+    candidate_scope: ${candidate_scope}
+  system:
+    - candidates 是本次可选的客户全集，每项含 key / name / city / status_label / owner_name。
+    - 依据简称、别称、校区名、上下文指代（如「那个学校」「上次那家」）做语义判断，不要退化成字面包含匹配。
+    - 只能返回 candidates 中出现过的 key。没有任何一项匹配时返回 null：不要猜测，不要新建，不要返回候选外的值。
+    - 不要返回 key 以外的任何标识（UUID、数据库 id 等一律不得出现在输出里）。
+    - candidate_scope 说明本次候选的取集范围。若 message 提到的客户明显不在此范围内，返回 null，并在 reason 中说明「候选范围内未覆盖」。

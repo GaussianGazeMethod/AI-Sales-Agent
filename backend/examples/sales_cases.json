@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "data_kind": "synthetic_demo",
+  "note": "全部机构、身份、金额和时间为虚构演示数据；预置阶段证据不代表模型实际回放结果。日期以启动日回推。",
+  "cases": [
+    {
+      "case_id": "case-a",
+      "customer_name": "示例学院甲",
+      "purpose": "同客户多项目隔离、已完成证据与尚未达成条件分别展示",
+      "projects": [
+        {
+          "key": "a-platform",
+          "name": "综合评价平台建设",
+          "current_stage": "s3_proposal_quote",
+          "initial_budget_fen": 80000000,
+          "current_budget_fen": 80000000,
+          "signed": false,
+          "facts": {
+            "need": "学生综合评价",
+            "scope": "评价平台及试点班级",
+            "funding_source": "学校专项资金，最终额度待确认",
+            "proposal_completion_state": "completed",
+            "quote_completion_state": "not_completed"
+          },
+          "events": [
+            {
+              "stage": "s1_valid_opportunity",
+              "days_before_today": 70,
+              "content": "客户名称、联系人职位、地址及公办学校类型已核实属实；演示主任同意汇报交流，已通过演示联系ID建立直接联系。"
+            },
+            {
+              "stage": "s2_customer_reached",
+              "days_before_today": 62,
+              "content": "已上门向项目负责人和分管负责人汇报，客户确认要建设学生综合评价；需求报告已根据本次事实整理并与客户确认，约定下一次方案沟通。"
+            },
+            {
+              "stage": "s3_proposal_quote",
+              "days_before_today": 2,
+              "content": "建设方案已完成，报价仍在准备；下次沟通需核对试点范围和报价，不将整项方案与报价标为完成。"
+            }
+          ],
+          "fact_sources": {
+            "need": "【合成事实声明】need = 学生综合评价",
+            "scope": "【合成事实声明】scope = 评价平台及试点班级",
+            "funding_source": "【合成事实声明】funding_source = 学校专项资金，最终额度待确认",
+            "proposal_completion_state": "【合成事实声明】proposal_completion_state = completed",
+            "quote_completion_state": "【合成事实声明】quote_completion_state = not_completed"
+          }
+        },
+        {
+          "key": "a-training",
+          "name": "教师培训试点",
+          "current_stage": "s1_valid_opportunity",
+          "initial_budget_fen": 18000000,
+          "current_budget_fen": 18000000,
+          "signed": false,
+          "facts": {
+            "need": "教师评价培训",
+            "scope": "培训试点",
+            "funding_source": "待了解"
+          },
+          "events": [
+            {
+              "stage": "s1_valid_opportunity",
+              "days_before_today": 3,
+              "content": "本条为教师培训试点，客户联系人及职位核实正确，客户同意继续微信交流并查看资料；它与综合评价平台建设是两个独立项目。"
+            }
+          ],
+          "fact_sources": {
+            "need": "【合成事实声明】need = 教师评价培训",
+            "scope": "【合成事实声明】scope = 培训试点",
+            "funding_source": "【合成事实声明】funding_source = 待了解"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "case-b",
+      "customer_name": "示例学院乙",
+      "purpose": "直接采购、范围缩减、预算与合同分开、签约不等于回款",
+      "projects": [
+        {
+          "key": "b-direct",
+          "name": "教师评价平台直采",
+          "current_stage": "s7_contract_signed",
+          "initial_budget_fen": 32000000,
+          "current_budget_fen": 24000000,
+          "contract_amount_fen": 24000000,
+          "signed": true,
+          "facts": {
+            "need": "教师教学评价",
+            "scope": "先建设教师评价核心功能",
+            "funding_source": "学校自有项目资金",
+            "funding_available": true,
+            "procurement_method": "direct_purchase",
+            "proposal_completion_state": "completed",
+            "quote_completion_state": "completed"
+          },
+          "events": [
+            {
+              "stage": "s1_valid_opportunity",
+              "days_before_today": 70,
+              "content": "客户名称、联系人职位、地址及公办学校类型已核实属实；演示主任同意汇报交流，已通过演示联系ID建立直接联系。"
+            },
+            {
+              "stage": "s2_customer_reached",
+              "days_before_today": 62,
+              "content": "已上门向项目负责人和分管负责人汇报，客户确认要建设教师教学评价；需求报告已根据本次事实整理并与客户确认，约定下一次方案沟通。"
+            },
+            {
+              "stage": "s3_proposal_quote",
+              "days_before_today": 52,
+              "content": "建设方案和32万元报价均已完成，客户反复确认方案及价格，接受作为当前建设基础。"
+            },
+            {
+              "stage": "s4_budget_confirmed",
+              "days_before_today": 43,
+              "content": "已提供最终方案；关键决策人确认32万元项目资金来源为学校自有资金、当期可用，经费确认达成。"
+            },
+            {
+              "stage": "s5_project_reviewed",
+              "days_before_today": 32,
+              "content": "已协助编写立项报告，客户管理会正式通过；后续缩减建设范围，当前采购规模调整为24万元，保留此前32万元经费确认历史。"
+            },
+            {
+              "stage": "s6_bidding",
+              "days_before_today": 12,
+              "content": "项目采用直接采购，已准备采购材料，全部审核意见已处理，客户采购审核正式通过；不存在投标和答辩环节。"
+            },
+            {
+              "stage": "s7_contract_signed",
+              "days_before_today": 2,
+              "content": "双方已完成内部合同评审和签约，价格、付款及验收条款一致，合同金额24万元；已发起交接，未提供实际回款或交付启动事实。"
+            }
+          ],
+          "fact_sources": {
+            "need": "【合成事实声明】need = 教师教学评价",
+            "scope": "【合成事实声明】scope = 先建设教师评价核心功能",
+            "funding_source": "【合成事实声明】funding_source = 学校自有项目资金",
+            "funding_available": "【合成事实声明】funding_available = True",
+            "procurement_method": "【合成事实声明】procurement_method = direct_purchase",
+            "proposal_completion_state": "【合成事实声明】proposal_completion_state = completed",
+            "quote_completion_state": "【合成事实声明】quote_completion_state = completed"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "case-c",
+      "customer_name": "示例学院丙",
+      "purpose": "需求追问、分期建设、日期更正、招标与签约全过程",
+      "projects": [
+        {
+          "key": "c-phased",
+          "name": "学生评价平台分期建设",
+          "current_stage": "s7_contract_signed",
+          "initial_budget_fen": 60000000,
+          "current_budget_fen": 57000000,
+          "contract_amount_fen": 57000000,
+          "signed": true,
+          "facts": {
+            "need": "学生综合素质评价",
+            "scope": "评价平台与既有教学系统对接",
+            "funding_source": "学校项目资金",
+            "funding_available": true,
+            "procurement_method": "bidding",
+            "contract_plan": "一次签约分两期交付；一期15万元可用，二期45万元资金待确认；最终57万元合同的分期拆分仍待确认",
+            "proposal_completion_state": "completed",
+            "quote_completion_state": "completed"
+          },
+          "events": [
+            {
+              "stage": "s1_valid_opportunity",
+              "days_before_today": 78,
+              "content": "客户名称、联系人职位、地址和机构类型核实属实，客户同意下一步汇报交流，已取得演示联系ID。"
+            },
+            {
+              "stage": "s2_customer_reached",
+              "days_before_today": 70,
+              "content": "已拜访并汇报，客户对AI评价方向认可；进一步明确为学生综合素质评价，学校提供评价标准用于方案。"
+            },
+            {
+              "stage": "s2_customer_reached",
+              "days_before_today": 65,
+              "content": "资料已用于需求与方案设计，客户已确认需求报告；汇报原暂定时间调整为新的预约日期，未来汇报仍未执行。"
+            },
+            {
+              "stage": "s3_proposal_quote",
+              "days_before_today": 58,
+              "content": "本次实际汇报已完成，建设方案与60万元报价均已完成并经客户确认，计划分期交付。"
+            },
+            {
+              "stage": "s4_budget_confirmed",
+              "days_before_today": 50,
+              "content": "最终方案获得关键决策人认可；确认一期15万元学校项目资金当期可用，认可一次整体签约、分两期建设；二期45万元资金未确认。"
+            },
+            {
+              "stage": "s5_project_reviewed",
+              "days_before_today": 40,
+              "content": "已协助编写立项报告；客户要求补充覆盖范围和实施计划，尚未正式过会。"
+            },
+            {
+              "stage": "s5_project_reviewed",
+              "days_before_today": 33,
+              "content": "补充方案获认可，客户管理会正式通过，已向采购联系人确认下一步公告安排。"
+            },
+            {
+              "stage": "s6_bidding",
+              "days_before_today": 25,
+              "content": "招标公告已发布，投标材料正在准备；尚无中标结果。"
+            },
+            {
+              "stage": "s6_bidding",
+              "days_before_today": 16,
+              "content": "投标材料已递交，已按采购要求完成答辩准备并处理意见；等待结果，不提前勾选取得中标结果。"
+            },
+            {
+              "stage": "s6_bidding",
+              "days_before_today": 8,
+              "content": "我方已取得中标通知书，中标金额57万元；约定后续签约，尚未签约。"
+            },
+            {
+              "stage": "s7_contract_signed",
+              "days_before_today": 5,
+              "content": "合同已递交，双方盖章流转中，尚未完成签约；后续跟进签约结果。"
+            },
+            {
+              "stage": "s7_contract_signed",
+              "days_before_today": 2,
+              "content": "双方已明确完成内部评审和签约，价格、付款及验收条款一致，合同金额明确沿用中标57万元；交接已发起，实际回款与最终分期拆分未确认。"
+            }
+          ],
+          "fact_sources": {
+            "need": "【合成事实声明】need = 学生综合素质评价",
+            "scope": "【合成事实声明】scope = 评价平台与既有教学系统对接",
+            "funding_source": "【合成事实声明】funding_source = 学校项目资金",
+            "funding_available": "【合成事实声明】funding_available = True",
+            "procurement_method": "【合成事实声明】procurement_method = bidding",
+            "contract_plan": "【合成事实声明】contract_plan = 一次签约分两期交付；一期15万元可用，二期45万元资金待确认；最终57万元合同的分期拆分仍待确认",
+            "proposal_completion_state": "【合成事实声明】proposal_completion_state = completed",
+            "quote_completion_state": "【合成事实声明】quote_completion_state = completed"
+          }
+        }
+      ]
+    }
+  ]
+}

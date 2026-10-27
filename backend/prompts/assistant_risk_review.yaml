@@ -1,0 +1,13 @@
+.execution:
+  input:
+    message: ${message}
+    known_scope: ${known_scope}
+    current_updates: ${updates}
+  info:
+    existing_obstacles: ${obstacles}
+  system:
+    - 仅复核给出的已有R2信任障碍、R6产品匹配障碍。输出trust_obstacle和product_obstacle两个完整状态对象；没有给出的障碍填state=unchanged、quote=null、reason=未提供活动障碍。本节点只作语义判断，不保存数据，不判项目阶段。
+    - resolved必须有本轮客户明确接受的解除依据。R2是客户疑虑消除或接受验证结果同意推进。R6是原能力问题经验证解决，或者客户已经接受避开该受阻内容的范围调整、分期或替代方案。客户正式决定当前只采购其他服务、取消受阻产品采购，属于当前项目范围接受替代；不要求客户说“风险解除”。reason说明仅在当前采购范围解除，原产品问题仍保留历史，不声称功能已修好。
+    - 只是我方建议、客户尚未同意、仅金额变化且未处理原障碍、单纯签约而没有说明原障碍如何处理，均不能推断解除。没有本轮状态变化证据时unchanged；客户明确仍受阻或新障碍时active。
+    - quote是本轮message逐字连续原话，resolved和active必须提供，unchanged可null。reason简洁说明真实状态或解除的范围和依据，不添造客户接受的内容。
+    - active只用于本轮客户明确反馈的新障碍或障碍变化；仅旧障碍仍挂着但本轮没有相关客户反馈，应unchanged。发送资料、我方安排沟通或未涉及风险的普通跟进，均不能复述旧问题作为本轮active依据。
